@@ -1,7 +1,7 @@
 ## Spaced Repetition in Status Bar
 
 This is a simple plugin which cycles through text in the status bar. 
-Possible uses include memorizing flashcards or learning vocabulary.
+This allows you to always have the text open, great for memorizing short flashcards or learning vocabulary.
 
 To use, simply create a `flashcard.md` file in the root folder of your vault.
 

@@ -1,0 +1,9 @@
+{
+  "id": "spaced-repetition-status-bar",
+  "name": "Spaced Repetition Status Bar",
+  "version": "1.0.1",
+  "description": "Spaced repetition in your status bar from a single note",
+  "author": "Eric Xia",
+  "authorUrl": "eric-xia.com",
+  "isDesktopOnly": false
+}

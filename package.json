@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-sample-plugin",
+  "name": "spaced-repetition-status-bar",
   "version": "0.9.7",
-  "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+  "description": "This is a plugin for Obsidian which implements spaced repetition in the status bar",
   "main": "main.js",
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
