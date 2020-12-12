@@ -10,5 +10,5 @@ To use, simply create a note titled `flashcard` in the root folder of your vault
 
 The first line can optionally set the number of milliseconds to display each line (it defaults to 4000, or 4 seconds). 
 
-For best results, use less than 60 characters per line. You can prevent other status bar plugins from shifting the the text around by disabling them, enabling this plugin first, and then reenabling the others. This will put this plugin at the front of the list.
+For best results, use less than 60 characters per line. You can reduce the amount of shifting occurring in the status bar by disabling other status text plugins, enabling this plugin first, and then reenabling the others. This will put this plugin at the front of the list.
 
