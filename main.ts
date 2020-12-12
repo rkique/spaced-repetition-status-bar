@@ -1,67 +1,86 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
+import { listeners } from 'cluster';
+import { read } from 'fs';
+import { TFile, Plugin, Notice, PluginSettingTab, Setting} from 'obsidian';
 export default class MyPlugin extends Plugin {
+	
+
+	private flashcards:string[] = [];
+	private counter = 0
+	private MAXCHARS = 40
+	private DURATION = 4000;
+	private startPosition = 0;
+	private globalIntervalId = 0;
+	statusBar: HTMLElement
+
+	myFunc = () => {
+		if(this.counter == this.flashcards.length - 1)
+		{
+			this.counter = this.startPosition;
+		}
+		else
+		{
+			this.counter++
+		}
+		let statusBarText = this.flashcards[this.counter];
+		if (statusBarText.length > this.MAXCHARS) {this.counter ++}
+		else {
+		let marginText = "‎‎‎‏‏‎‏‏‎ ‎".repeat(Math.floor((this.MAXCHARS - statusBarText.length)/2))
+		this.statusBar.setText(marginText + statusBarText + marginText);
+		}
+	}
+
+	readLines(lines:string){
+		this.flashcards = lines.split(/\n/)
+		//removes blank strings
+		this.flashcards = this.flashcards.filter(function(v){return v!==''})
+		if(+this.flashcards[0] == 0)
+		{
+			this.startPosition = 0;
+		}
+		else
+		{
+		this.startPosition = 1;
+		this.DURATION = Math.max(Number(this.flashcards[0]), 300)
+		this.updateInterval(this.myFunc, this.DURATION)
+		}
+
+	}
 	onload() {
 		console.log('loading plugin');
 
-		this.addRibbonIcon('dice', 'Sample Plugin', () => {
-			new Notice('This is a notice!');
-		});
+		this.registerEvent(this.app.workspace.on('file-open', (file: TFile) => {
 
-		this.addStatusBarItem().setText('Status Bar Text');
+			const flashcard_file = 'flashcard.md';
 
-		this.addCommand({
-			id: 'open-sample-modal',
-			name: 'Open Sample Modal',
-			// callback: () => {
-			// 	console.log('Simple Callback');
-			// },
-			checkCallback: (checking: boolean) => {
-				let leaf = this.app.workspace.activeLeaf;
-				if (leaf) {
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-					return true;
-				}
-				return false;
-			}
-		});
+			this.app.vault.adapter.read(flashcard_file).
+				then((cards) => this.readLines(cards)).
+				catch(error => { new Notice('Error loading flashcard.md -- please create a flashcard.md file')})
+		}))
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		this.registerEvent(this.app.on('codemirror', (cm: CodeMirror.Editor) => {
-			console.log('codemirror', cm);
-		}));
-
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		this.statusBar = this.addStatusBarItem()
+		this.statusBar.setText("")
+		this.updateInterval(this.myFunc, this.DURATION)
 	}
 
+	updateInterval = (myFunc:Function, duration:number) => {
+		if(this.globalIntervalId != 0)
+		{
+			console.log(`ending interval with id ${this.globalIntervalId}`)
+			window.clearInterval(this.globalIntervalId)
+		}
+		this.globalIntervalId = window.setInterval(myFunc, duration)
+		console.log(`interval assigned as ${this.globalIntervalId}`)
+		this.registerInterval(this.globalIntervalId)
+	}
+	
 	onunload() {
 		console.log('unloading plugin');
 	}
+
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
 
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		let {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
+/*
 class SampleSettingTab extends PluginSettingTab {
 	display(): void {
 		let {containerEl} = this;
@@ -71,13 +90,13 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text.setPlaceholder('Enter your secret')
+			.setName('Duration setting')
+			.setDesc('the duration between switches')
+			.addText(text => text.setPlaceholder('TODO')
 				.setValue('')
 				.onChange((value) => {
-					console.log('Secret: ' + value);
+					console.log(value)
 				}));
 
 	}
-}
+}*/
