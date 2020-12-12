@@ -1,6 +1,6 @@
 import { listeners } from "cluster";
 import { read } from "fs";
-import { TFile, Plugin, Notice, PluginSettingTab, Setting } from "obsidian";
+import { TFile, Plugin, Notice} from "obsidian";
 export default class MyPlugin extends Plugin {
   private flashcards: string[] = [];
   private counter = 0;
@@ -57,12 +57,9 @@ export default class MyPlugin extends Plugin {
 	{
 		this.flashcards.forEach((o, i, a) => a[i] = a[i].split("|").join(": "))
 	}
-
-    console.log(this.flashcards);
   }
 
   onload() {
-    console.log("loading plugin");
 
     this.registerEvent(
       this.app.workspace.on("file-open", (file: TFile) => {
@@ -86,36 +83,14 @@ export default class MyPlugin extends Plugin {
 
   updateInterval = (myFunc: Function, duration: number) => {
     if (this.globalIntervalId != 0) {
-      console.log(`ending interval with id ${this.globalIntervalId}`);
       window.clearInterval(this.globalIntervalId);
     }
     this.globalIntervalId = window.setInterval(myFunc, duration);
-    console.log(`interval assigned as ${this.globalIntervalId}`);
     this.registerInterval(this.globalIntervalId);
   };
 
   onunload() {
-    console.log("unloading plugin");
+	  //do?
   }
 }
 
-/*
-class SampleSettingTab extends PluginSettingTab {
-	display(): void {
-		let {containerEl} = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Duration setting')
-			.setDesc('the duration between switches')
-			.addText(text => text.setPlaceholder('TODO')
-				.setValue('')
-				.onChange((value) => {
-					console.log(value)
-				}));
-
-	}
-}*/
